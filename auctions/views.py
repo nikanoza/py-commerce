@@ -50,6 +50,13 @@ def filter_categories(request):
                 "categories": categories
             })
 
+def listing(request, id):
+    if request.method == "GET":
+        listing = Listing.objects.get(id=float(id))
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+        })
+
 def login_view(request):
     if request.method == "POST":
 
