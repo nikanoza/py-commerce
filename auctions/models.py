@@ -21,3 +21,10 @@ class Listing(models.Model):
     watchist = models.ManyToManyField(User, blank=True, null=True, related_name="listingWachlist")
     def __str__(self):
         return self.title
+    
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="userComm")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, null=True, related_name="listingComm")  
+    message = models.CharField(max_length=200)
+    def __str__(self):
+        return self.author
