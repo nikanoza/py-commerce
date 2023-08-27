@@ -67,6 +67,9 @@ def watchlist(request):
         for listing in listingData:
             if user in listing.watchist.all():
                 listings.append(listing)
+        return render(request, "auctions/watchlist.html", {
+            "listings": listings,
+        })        
 
 def remove_from_listing(request, id):
     listing = Listing.objects.get(pk=id)
