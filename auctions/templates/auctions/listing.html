@@ -1,12 +1,29 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+<div class="row">
+    {% if user.is_authenticated %}
+        {% if isWatchlist %}
+        <form action="{% url 'remove' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">remove from watchlist</button>
+        </form>    
+        {% else %}
+        <form action="{% url 'add' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">Add to watchlist</button>
+        </form> 
+        {% endif %}
+    {% endif %}
+</div>
 
 <div class="card" style="width: 18rem;">
     <img src="{{ listing.imageUrl }}" class="card-img-top" alt="...">
     <div class="card-body">
     <h5 class="card-title">{{ listing.title }}</h5>
     <p class="card-text">{{ listing.description }}</p>
+    <p class="card-text">${{ listing.price }}</p>
+    <p class="card-text">{{ listing.owner }}</p>
     <a href="#" class="btn btn-primary">Go somewhere</a>
     </div>
 </div>

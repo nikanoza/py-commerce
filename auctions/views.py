@@ -53,9 +53,34 @@ def filter_categories(request):
 def listing(request, id):
     if request.method == "GET":
         listing = Listing.objects.get(id=float(id))
+        isWachlist = request.user in listing.watchist.all()
         return render(request, "auctions/listing.html", {
             "listing": listing,
+            "isWatchlist": isWachlist
         })
+
+def watchlist(request):
+    if request.method == "GET":
+        listings = []
+        listingData = Listing.objects.all()   
+        user = request.user
+        for listing in listingData:
+            if user in listing.watchist.all():
+                listings.append(listing)
+
+def remove_from_listing(request, id):
+    listing = Listing.objects.get(pk=id)
+    user = request.user
+    listing.watchist.remove(user)
+    listing.save()
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
+
+def add_to_watchlist(request, id):
+    listing = Listing.objects.get(pk=id)
+    user = request.user
+    listing.watchist.add(user)
+    listing.save()
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 def login_view(request):
     if request.method == "POST":
