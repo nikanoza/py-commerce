@@ -53,11 +53,23 @@ def filter_categories(request):
 def listing(request, id):
     if request.method == "GET":
         listing = Listing.objects.get(id=float(id))
+        comments = Comment.objects.filter(listing=listing)
         isWachlist = request.user in listing.watchist.all()
         return render(request, "auctions/listing.html", {
             "listing": listing,
-            "isWatchlist": isWachlist
+            "isWatchlist": isWachlist,
+            "comments": comments
         })
+
+def add_comment(request, id):
+    if request.method == "POST":
+        user = request.user
+        comment = request.POST["comment"]
+        listing = Listing.objects.get(pk=id)
+        newComment = Comment(author=user,listing=listing,message=comment)
+        newComment.save()
+        return HttpResponseRedirect(reverse("listing", args=(id, )))
+
 
 def watchlist(request):
     if request.method == "GET":

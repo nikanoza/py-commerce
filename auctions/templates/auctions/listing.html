@@ -20,12 +20,29 @@
 <div class="card" style="width: 18rem;">
     <img src="{{ listing.imageUrl }}" class="card-img-top" alt="...">
     <div class="card-body">
-    <h5 class="card-title">{{ listing.title }}</h5>
-    <p class="card-text">{{ listing.description }}</p>
-    <p class="card-text">${{ listing.price }}</p>
-    <p class="card-text">{{ listing.owner }}</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
+        <h5 class="card-title">{{ listing.title }}</h5>
+        <p class="card-text">{{ listing.description }}</p>
+        <p class="card-text">${{ listing.price }}</p>
+        <p class="card-text">{{ listing.owner }}</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
     </div>
 </div>
+
+<div class="row">
+    <h3>Comments</h3>
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <textarea class="form-control" id="exampleFormControlTextarea1" style="resize: none;" name="comment" rows="3"></textarea>
+            <button class="btn btn-primary" type="submit">add comment</button>
+        </form>    
+    {% endif %}
+</div>
+    {% for comment in comments %}
+        <div class="card" style="width: 18rem;">
+            <h2>{{ comment.author }}</h2>
+            <p>{{ comment.message }}</p>
+        </div>
+    {% endfor %}
 
 {% endblock %}
