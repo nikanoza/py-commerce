@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Category, Listing, Comment
+from .models import User, Category, Listing, Comment, Bid
 
 
 def index(request):
@@ -29,7 +29,9 @@ def createListing(request):
         category = request.POST["category"]
         categoryData = Category.objects.get(name=category)
         user = request.user
-        listing = Listing(title=title, description=description, imageUrl=image_url, price=float(price), owner=user, active=True, category=categoryData)
+        bid = Bid(bid=int(price), user=user)
+        bid.save()
+        listing = Listing(title=title, description=description, imageUrl=image_url, price=bid, owner=user, active=True, category=categoryData)
         listing.save()
         return HttpResponseRedirect(reverse("index"))
        
@@ -60,6 +62,17 @@ def listing(request, id):
             "isWatchlist": isWachlist,
             "comments": comments
         })
+
+def make_bid(request, id):
+    currentBid = request.POST["bid"]
+    listing = Listing.objects.get(id=float(id))
+    if int(currentBid) > listing.price.bid:
+        user = request.user
+        newBid = Bid(bid=int(currentBid), user=user)
+        newBid.save()
+        listing.price = newBid
+        listing.save()
+        return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 def add_comment(request, id):
     if request.method == "POST":
@@ -134,8 +147,6 @@ def register(request):
             return render(request, "auctions/register.html", {
                 "message": "Passwords must match."
             })
-
-        # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()

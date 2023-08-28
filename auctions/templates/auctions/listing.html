@@ -22,9 +22,15 @@
     <div class="card-body">
         <h5 class="card-title">{{ listing.title }}</h5>
         <p class="card-text">{{ listing.description }}</p>
-        <p class="card-text">${{ listing.price }}</p>
         <p class="card-text">{{ listing.owner }}</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+        <h4>Initial Price: {{ listing.price.bid }}</h4>
+        {% if user.is_authenticated %}
+        <form action="{% url 'bid' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="bid">
+            <button class="btn btn-primary" type="submit">Make a Bid</button>
+        </form>    
+        {% endif %}
     </div>
 </div>
 
