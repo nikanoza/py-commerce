@@ -57,10 +57,12 @@ def listing(request, id):
         listing = Listing.objects.get(id=float(id))
         comments = Comment.objects.filter(listing=listing)
         isWachlist = request.user in listing.watchist.all()
+        isOwner = request.user.username == listing.owner.username
         return render(request, "auctions/listing.html", {
             "listing": listing,
             "isWatchlist": isWachlist,
-            "comments": comments
+            "comments": comments,
+            "isOwner": isOwner
         })
 
 def make_bid(request, id):
@@ -73,6 +75,12 @@ def make_bid(request, id):
         listing.price = newBid
         listing.save()
         return HttpResponseRedirect(reverse("listing", args=(id, )))
+    
+def close_auction(request, id):
+    listing = Listing.objects.get(id=float(id))
+    listing.active = False
+    listing.save()
+    return HttpResponseRedirect(reverse("index"))
 
 def add_comment(request, id):
     if request.method == "POST":

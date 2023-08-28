@@ -31,6 +31,12 @@
             <button class="btn btn-primary" type="submit">Make a Bid</button>
         </form>    
         {% endif %}
+        {% if user.is_authenticated and isOwner and listing.active %}
+        <form action="{% url 'close' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit">close</button>
+        </form>    
+        {% endif %}
     </div>
 </div>
 
